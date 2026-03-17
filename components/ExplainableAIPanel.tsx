@@ -15,9 +15,13 @@ import {
   Search,
   PieChart as PieChartIcon,
   Cpu,
-  Network
+  Network,
+  AlertTriangle,
+  Scale,
+  TrendingDown
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Sector } from 'recharts';
+import { optimizePolicyQAOA, predictPollutionHybrid, HybridPredictionResult } from '../src/services/quantumAIService';
 
 interface Factor {
   id: string;
@@ -155,8 +159,20 @@ const ExplainableAIPanel: React.FC = () => {
   const [showCityList, setShowCityList] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [quantumPolicy, setQuantumPolicy] = useState<any>(null);
+  const [hybridData, setHybridData] = useState<HybridPredictionResult | null>(null);
 
   const cityData = useMemo(() => generateCityData(selectedCity), [selectedCity]);
+
+  useEffect(() => {
+    // Simulate quantum policy optimization for the selected city
+    const policy = optimizePolicyQAOA(selectedCity);
+    setQuantumPolicy(policy);
+    
+    // Simulate hybrid prediction for explainability
+    const hybrid = predictPollutionHybrid(selectedCity);
+    setHybridData(hybrid);
+  }, [selectedCity]);
 
   const filteredCities = CITIES.filter(city => 
     city.toLowerCase().includes(searchQuery.toLowerCase())
@@ -186,6 +202,24 @@ const ExplainableAIPanel: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col gap-8 animate-in fade-in duration-700">
+      {/* Simulation Status Bar */}
+      <div className="flex items-center justify-between glass p-3 rounded-xl border border-white/5 bg-slate-900/40">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full">
+            <AlertTriangle className="w-3 h-3 text-amber-500" />
+            <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Simulation Mode</span>
+          </div>
+          <div className="h-4 w-px bg-white/10"></div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Neural Explainer Active</span>
+          </div>
+        </div>
+        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
+          Deterministic Neural Attribution Simulation
+        </div>
+      </div>
+
       <div className="flex justify-between items-end border-b border-slate-200 dark:border-slate-800 pb-8">
         <div>
           <h2 className="text-5xl font-black text-white tracking-tighter mb-2">Explainable AI Panel</h2>
@@ -332,6 +366,34 @@ const ExplainableAIPanel: React.FC = () => {
                 </AnimatePresence>
               </motion.div>
             ))}
+
+            {/* Quantum Policy Optimization Card */}
+            {quantumPolicy && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass p-6 rounded-3xl border border-purple-500/20 bg-purple-500/5"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <Scale className="w-5 h-5 text-purple-400" />
+                  <h4 className="text-xs font-black text-purple-400 uppercase tracking-widest">Quantum Policy QAOA</h4>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-slate-500 uppercase font-black">Optimal Carbon Tax</span>
+                    <span className="text-sm font-mono text-white">${quantumPolicy.optimalCarbonTax}/ton</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-slate-500 uppercase font-black">Expected AQI Reduction</span>
+                    <span className="text-sm font-mono text-emerald-400">-{quantumPolicy.expectedAQIReduction} pts</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-slate-500 uppercase font-black">Solution Fidelity</span>
+                    <span className="text-sm font-mono text-cyan-400">{(quantumPolicy.fidelity * 100).toFixed(1)}%</span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
         </div>
 
@@ -472,6 +534,49 @@ const ExplainableAIPanel: React.FC = () => {
                   <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Method</div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Hybrid Model Architecture Section */}
+          <div className="glass rounded-[40px] border border-slate-800 p-8 mt-8">
+            <div className="flex items-center gap-3 mb-6">
+              <Zap className="w-5 h-5 text-amber-400" />
+              <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.4em]">Hybrid Model Architecture</h3>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4 relative">
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-full p-4 bg-slate-900/50 rounded-2xl border border-slate-800 text-center">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Classical</span>
+                  <div className="text-xs font-bold text-white mt-1">LSTM / RF</div>
+                </div>
+                <div className="h-8 w-0.5 bg-slate-800"></div>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-full p-4 bg-cyan-400/10 rounded-2xl border border-cyan-400/30 text-center">
+                  <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Quantum</span>
+                  <div className="text-xs font-bold text-white mt-1">Feature Map</div>
+                </div>
+                <div className="h-8 w-0.5 bg-cyan-400/30"></div>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-full p-4 bg-slate-900/50 rounded-2xl border border-slate-800 text-center">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Classical</span>
+                  <div className="text-xs font-bold text-white mt-1">Dense Layer</div>
+                </div>
+                <div className="h-8 w-0.5 bg-slate-800"></div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 text-center">
+              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Hybrid Prediction Output</span>
+              <div className="text-lg font-black text-white mt-1">AQI Forecast</div>
+            </div>
+            
+            <div className="mt-6 p-4 bg-cyan-400/5 rounded-2xl border border-cyan-400/10">
+              <p className="text-[10px] text-slate-400 leading-relaxed">
+                The <span className="text-cyan-400 font-bold">Quantum Feature Map</span> projects input data into a high-dimensional Hilbert space, allowing the model to resolve complex non-linear correlations that classical LSTM layers might miss.
+              </p>
             </div>
           </div>
         </div>

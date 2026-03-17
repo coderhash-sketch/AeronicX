@@ -34,6 +34,7 @@ import {
   Legend
 } from 'recharts';
 import { CITIES, CityData } from '../constants';
+import QuantumDispersionEngine from './QuantumDispersionEngine';
 
 interface Particle {
   id: number;
@@ -340,19 +341,20 @@ const PollutionJourneySimulator: React.FC = () => {
             </div>
 
             {/* Particles Canvas */}
-            <svg className="absolute inset-0 w-full h-full z-20 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-              {particles.map(p => (
-                <circle
-                  key={p.id}
-                  cx={p.x}
-                  cy={p.y}
-                  r={p.size * 0.2}
-                  fill={p.color}
-                  className="blur-[0.5px]"
-                  style={{ opacity: 1 - (p.life / p.maxLife) }}
-                />
-              ))}
-            </svg>
+            <div className="absolute inset-0 z-20 pointer-events-none">
+              <QuantumDispersionEngine 
+                wind={{ x: isGreenCity ? 0.8 : 0.3, y: 0.1 }}
+                temperature={selectedCity.pollution > 150 ? 35 : 25}
+                sources={[{ 
+                  x: 20, 
+                  y: 60, 
+                  strength: selectedCity.pollution / 100 
+                }]}
+                showProbabilityField={isSimulating}
+                showParticles={isSimulating}
+                interventionActive={isGreenCity}
+              />
+            </div>
 
             {/* Progress Bar Overlay */}
             <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-900 z-50">

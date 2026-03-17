@@ -16,22 +16,26 @@ import {
   Leaf,
   BarChart3,
   Search,
-  Activity
+  Activity,
+  AlertTriangle,
+  Network
 } from 'lucide-react';
 import { ProcessStep, MaterialCandidate } from '../types';
+import { quantumScreening } from '../src/services/quantumAIService';
 
 const AIFilteringEngine: React.FC = () => {
   const [currentStage, setCurrentStage] = useState<'upload' | 'processing' | 'dashboard'>('upload');
   const [pipelineProgress, setPipelineProgress] = useState(0);
   const [analysisMetrics, setAnalysisMetrics] = useState({ analyzed: 0, accuracy: 0 });
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [quantumStats, setQuantumStats] = useState({ entanglement: 0, speedup: '0x' });
 
   const steps: ProcessStep[] = [
     { id: 'upload', label: 'Dataset Ingestion', status: 'pending', progress: 0 },
     { id: 'filtering', label: 'Neural GNN Screening', status: 'pending', progress: 0 },
-    { id: 'quantum', label: 'Quantum Verification', status: 'pending', progress: 0 },
+    { id: 'quantum_kernel', label: 'Quantum Kernel Mapping', status: 'pending', progress: 0 },
+    { id: 'quantum_verification', label: 'VQE Verification', status: 'pending', progress: 0 },
     { id: 'ranking', label: 'Hybrid Optimization', status: 'pending', progress: 0 },
-    { id: 'validation', label: 'Scientific Validation', status: 'pending', progress: 0 },
   ];
 
   const [activeSteps, setActiveSteps] = useState(steps);
@@ -70,6 +74,12 @@ const AIFilteringEngine: React.FC = () => {
           next[currentIdx].progress += 5;
           next[currentIdx].status = 'processing';
           setPipelineProgress(prevP => prevP + (5 / steps.length));
+          
+          // Inject quantum screening data during quantum steps
+          if (next[currentIdx].id.includes('quantum')) {
+            const stats = quantumScreening(1245892);
+            setQuantumStats({ entanglement: stats.entanglementEntropy, speedup: stats.speedupFactor });
+          }
         } else {
           next[currentIdx].status = 'completed';
           if (currentIdx < steps.length - 1) {
@@ -153,7 +163,7 @@ const AIFilteringEngine: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-8 w-full max-w-2xl">
+      <div className="grid grid-cols-3 gap-8 w-full max-w-3xl">
         <div className="glass p-8 rounded-3xl border-slate-800 flex flex-col items-center justify-center relative overflow-hidden group">
            <div className="absolute inset-0 bg-magenta-500/5 blur-[40px] group-hover:bg-magenta-500/10 transition-colors"></div>
            <Loader2 className="w-10 h-10 text-magenta-400 animate-spin mb-4" />
@@ -164,11 +174,19 @@ const AIFilteringEngine: React.FC = () => {
         </div>
         <div className="glass p-8 rounded-3xl border-slate-800 flex flex-col items-center justify-center relative overflow-hidden group">
            <div className="absolute inset-0 bg-cyan-500/5 blur-[40px] group-hover:bg-cyan-500/10 transition-colors"></div>
-           <Zap className="w-10 h-10 text-cyan-400 animate-pulse mb-4" />
+           <Network className="w-10 h-10 text-cyan-400 animate-pulse mb-4" />
            <span className="text-3xl font-mono font-black text-white mb-1">
-             {(Math.random() * -15).toFixed(2)} eV
+             {quantumStats.speedup}
            </span>
-           <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Avg. Predicted Affinity</span>
+           <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Quantum Kernel Speedup</span>
+        </div>
+        <div className="glass p-8 rounded-3xl border-slate-800 flex flex-col items-center justify-center relative overflow-hidden group">
+           <div className="absolute inset-0 bg-lime-500/5 blur-[40px] group-hover:bg-lime-500/10 transition-colors"></div>
+           <Zap className="w-10 h-10 text-lime-400 animate-pulse mb-4" />
+           <span className="text-3xl font-mono font-black text-white mb-1">
+             {quantumStats.entanglement.toFixed(3)}
+           </span>
+           <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Entanglement Entropy</span>
         </div>
       </div>
     </div>
@@ -301,7 +319,25 @@ const AIFilteringEngine: React.FC = () => {
   );
 
   return (
-    <div className="flex-1 flex flex-col p-2 h-full">
+    <div className="flex-1 flex flex-col p-2 h-full gap-6">
+      {/* Simulation Status Bar */}
+      <div className="flex items-center justify-between glass p-3 rounded-xl border border-white/5 bg-slate-900/40">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full">
+            <AlertTriangle className="w-3 h-3 text-amber-500" />
+            <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Simulation Mode</span>
+          </div>
+          <div className="h-4 w-px bg-white/10"></div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">GNN Pipeline Active</span>
+          </div>
+        </div>
+        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
+          High-Fidelity Neural Materials Simulation
+        </div>
+      </div>
+
       {currentStage === 'upload' && renderUpload()}
       {currentStage === 'processing' && renderProcessing()}
       {currentStage === 'dashboard' && renderDashboard()}

@@ -28,6 +28,8 @@ import {
 } from 'recharts';
 import { MaterialCandidate } from '../types';
 
+import { simulateVQEAdsorption } from '../src/services/quantumAIService';
+
 interface ResultsDashboardProps {
   selectedMaterial: MaterialCandidate;
   materials: MaterialCandidate[];
@@ -35,11 +37,21 @@ interface ResultsDashboardProps {
 }
 
 const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ selectedMaterial, materials, onSelect }) => {
+  const vqeData = useMemo(() => simulateVQEAdsorption(selectedMaterial.metal), [selectedMaterial.id]);
+
+  const globalRank = useMemo(() => {
+    const ranked = materials.map(m => ({
+      id: m.id,
+      score: parseFloat(simulateVQEAdsorption(m.metal).efficiencyScore)
+    })).sort((a, b) => b.score - a.score);
+    return ranked.findIndex(r => r.id === selectedMaterial.id) + 1;
+  }, [materials, selectedMaterial.id]);
+
   const metrics = [
     { label: 'CO₂ Adsorption', value: selectedMaterial.adsorption, icon: Wind, color: 'text-cyan-400' },
     { label: 'Surface Area', value: selectedMaterial.surfaceArea, icon: Shield, color: 'text-magenta-400' },
-    { label: 'Synthesis Time', value: selectedMaterial.synthesisTime, icon: Zap, color: 'text-lime-400' },
-    { label: 'Production Cost', value: selectedMaterial.cost, icon: DollarSign, color: 'text-blue-400' },
+    { label: 'VQE Binding Energy', value: `${vqeData.finalEnergy.toFixed(3)} Hartree`, icon: Zap, color: 'text-lime-400' },
+    { label: 'Quantum Efficiency', value: `${vqeData.efficiencyScore}%`, icon: Trophy, color: 'text-blue-400' },
   ];
 
   // Helper to parse values for the chart
@@ -146,9 +158,14 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ selectedMaterial, m
           </div>
           <div>
             <h3 className="text-2xl font-black tracking-tight text-white">{selectedMaterial.name}</h3>
-            <span className="text-sm font-mono text-slate-100 font-bold bg-slate-900/50 px-2 py-0.5 rounded border border-slate-700/50 shadow-[0_0_10px_rgba(255,255,255,0.05)]">
-              {selectedMaterial.formula}
-            </span>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-sm font-mono text-slate-100 font-bold bg-slate-900/50 px-2 py-0.5 rounded border border-slate-700/50 shadow-[0_0_10px_rgba(255,255,255,0.05)]">
+                {selectedMaterial.formula}
+              </span>
+              <span className="text-[10px] font-black px-2 py-0.5 bg-lime-400 text-slate-950 rounded uppercase tracking-tighter">
+                Rank #{globalRank}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -225,6 +242,34 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ selectedMaterial, m
                   style={{ width: `${climateImpact.sustainabilityScore}%` }}
                 ></div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quantum Adsorption Profile */}
+        <div className="mt-6 glass p-5 rounded-3xl border border-lime-500/20 bg-lime-500/5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-lime-400" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-lime-400">Quantum VQE Adsorption Profile</span>
+            </div>
+            <span className="text-[9px] font-mono text-slate-500 uppercase">Ansatz: {vqeData.ansatz}</span>
+          </div>
+          <div className="flex gap-6 items-center">
+            <div className="flex-1 h-16 relative">
+              <svg width="100%" height="100%" viewBox="0 0 200 60" preserveAspectRatio="none">
+                <path 
+                  d={`M ${vqeData.convergencePath.map((d: any, i: number) => `${(i / vqeData.convergencePath.length) * 200},${40 - (d.energy + 10) * 2}`).join(' L ')}`}
+                  fill="none"
+                  stroke="#84cc16"
+                  strokeWidth="1.5"
+                  strokeOpacity="0.6"
+                />
+              </svg>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Ground State Energy</span>
+              <span className="text-sm font-mono font-black text-white">{vqeData.finalEnergy.toFixed(5)} Ha</span>
             </div>
           </div>
         </div>

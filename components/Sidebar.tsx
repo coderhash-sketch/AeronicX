@@ -18,6 +18,8 @@ import {
   Fan,
   Share2,
   Zap,
+  TrendingUp,
+  Target,
   SolarPanel,
   Car,
   Lightbulb
@@ -78,30 +80,6 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
       activeBg: 'bg-orange-400/10',
       activeBorder: 'border-orange-400/20',
       glowShadow: 'shadow-[inset_0_0_20px_rgba(251,146,60,0.1)]'
-    },
-    { 
-      id: 'impact', 
-      label: 'Carbon Metrics', 
-      desc: 'Eco-Impact Data',
-      icon: Leaf, 
-      state: WorkflowState.IMPACT,
-      active: workflow === WorkflowState.IMPACT,
-      colorClass: 'text-emerald-400',
-      activeBg: 'bg-emerald-400/10',
-      activeBorder: 'border-emerald-400/20',
-      glowShadow: 'shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]'
-    },
-    { 
-      id: 'analytics', 
-      label: 'Economic Lens', 
-      desc: 'Feasibility Engine',
-      icon: BarChart3, 
-      state: WorkflowState.ANALYTICS,
-      active: workflow === WorkflowState.ANALYTICS,
-      colorClass: 'text-amber-400',
-      activeBg: 'bg-amber-400/10',
-      activeBorder: 'border-amber-400/20',
-      glowShadow: 'shadow-[inset_0_0_20px_rgba(251,191,36,0.1)]'
     },
     { 
       id: 'sustainability', 
@@ -191,13 +169,49 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
       id: 'scenario-lab', 
       label: 'Scenario Lab', 
       desc: 'Reduction Sim',
-      icon: Zap, 
+      icon: Wind, 
       state: WorkflowState.SCENARIO_LAB,
       active: workflow === WorkflowState.SCENARIO_LAB,
       colorClass: 'text-cyan-400',
       activeBg: 'bg-cyan-400/10',
       activeBorder: 'border-cyan-400/20',
       glowShadow: 'shadow-[inset_0_0_20px_rgba(34,211,238,0.1)]'
+    },
+    { 
+      id: 'quantum-optimization', 
+      label: 'Quantum Engine', 
+      desc: 'Optimization Core',
+      icon: Zap, 
+      state: WorkflowState.QUANTUM_OPTIMIZATION,
+      active: workflow === WorkflowState.QUANTUM_OPTIMIZATION,
+      colorClass: 'text-lime-400',
+      activeBg: 'bg-lime-400/10',
+      activeBorder: 'border-lime-400/20',
+      glowShadow: 'shadow-[inset_0_0_20px_rgba(163,230,71,0.1)]'
+    },
+    { 
+      id: 'prediction', 
+      label: 'Hybrid Predict', 
+      desc: 'Quantum-AI Forecast',
+      icon: TrendingUp, 
+      state: WorkflowState.PREDICTION,
+      active: workflow === WorkflowState.PREDICTION,
+      colorClass: 'text-cyan-400',
+      activeBg: 'bg-cyan-400/10',
+      activeBorder: 'border-cyan-400/20',
+      glowShadow: 'shadow-[inset_0_0_20px_rgba(34,211,238,0.1)]'
+    },
+    { 
+      id: 'decision-engine', 
+      label: 'Decision Hub', 
+      desc: 'Quantum Strategy',
+      icon: Target, 
+      state: WorkflowState.DECISION_ENGINE,
+      active: workflow === WorkflowState.DECISION_ENGINE,
+      colorClass: 'text-emerald-400',
+      activeBg: 'bg-emerald-400/10',
+      activeBorder: 'border-emerald-400/20',
+      glowShadow: 'shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]'
     },
   ];
 

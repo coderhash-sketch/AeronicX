@@ -14,8 +14,10 @@ import {
   Info,
   CloudRain,
   Zap,
-  Star
+  Star,
+  Activity as ActivityIcon
 } from 'lucide-react';
+import QuantumDispersionEngine from './QuantumDispersionEngine';
 
 type TimeOfDay = 'morning' | 'afternoon' | 'evening' | 'night';
 
@@ -126,6 +128,7 @@ const FactoryVisual = ({ x, y, smokeColor = '#64748b' }: { x: number, y: number,
 const AirStoryMode: React.FC = () => {
   const [time, setTime] = useState<TimeOfDay>('morning');
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isQuantumView, setIsQuantumView] = useState(false);
 
   const config = TIME_CONFIG[time];
 
@@ -292,28 +295,42 @@ const AirStoryMode: React.FC = () => {
 
             {/* Pollution Particles */}
             <div className="absolute inset-0 pointer-events-none z-40">
-              {particles.map((p) => (
-                <motion.div
-                  key={`${time}-${p.id}`}
-                  className={`absolute rounded-full blur-[1px] ${time === 'evening' ? 'bg-slate-900/60' : 'bg-slate-400/30'}`}
-                  style={{ 
-                    width: p.size, 
-                    height: p.size,
-                    left: `${p.x}%`,
-                    top: `${p.y}%`
-                  }}
-                  animate={{ 
-                    x: [0, 100 * config.windSpeed],
-                    opacity: [0, 0.4, 0]
-                  }}
-                  transition={{ 
-                    duration: 10 / config.windSpeed, 
-                    repeat: Infinity, 
-                    delay: p.delay,
-                    ease: "linear"
-                  }}
+              {isQuantumView ? (
+                <QuantumDispersionEngine 
+                  wind={{ x: config.windSpeed * 0.1, y: 0.05 }}
+                  temperature={time === 'afternoon' ? 35 : time === 'night' ? 15 : 25}
+                  sources={
+                    time === 'morning' ? [{ x: 50, y: 80, strength: 0.8 }] :
+                    time === 'afternoon' ? [{ x: 10, y: 80, strength: 1.0 }, { x: 80, y: 80, strength: 0.9 }] :
+                    time === 'evening' ? [{ x: 30, y: 80, strength: 1.2 }] :
+                    [{ x: 50, y: 80, strength: 0.3 }]
+                  }
+                  showProbabilityField={true}
                 />
-              ))}
+              ) : (
+                particles.map((p) => (
+                  <motion.div
+                    key={`${time}-${p.id}`}
+                    className={`absolute rounded-full blur-[1px] ${time === 'evening' ? 'bg-slate-900/60' : 'bg-slate-400/30'}`}
+                    style={{ 
+                      width: p.size, 
+                      height: p.size,
+                      left: `${p.x}%`,
+                      top: `${p.y}%`
+                    }}
+                    animate={{ 
+                      x: [0, 100 * config.windSpeed],
+                      opacity: [0, 0.4, 0]
+                    }}
+                    transition={{ 
+                      duration: 10 / config.windSpeed, 
+                      repeat: Infinity, 
+                      delay: p.delay,
+                      ease: "linear"
+                    }}
+                  />
+                ))
+              )}
             </div>
 
             {/* Time Indicator Overlay */}
@@ -341,12 +358,25 @@ const AirStoryMode: React.FC = () => {
               <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-2">
                 <Clock className="w-4 h-4" /> Timeline Control
               </h3>
-              <button 
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="p-2 rounded-full bg-slate-900 border border-slate-800 hover:bg-slate-800 transition-colors"
-              >
-                {isPlaying ? <Pause className="w-4 h-4 text-white" /> : <Play className="w-4 h-4 text-white" />}
-              </button>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setIsQuantumView(!isQuantumView)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all text-[10px] font-black uppercase tracking-widest ${
+                    isQuantumView 
+                      ? 'bg-cyan-400/10 border-cyan-400 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)]' 
+                      : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'
+                  }`}
+                >
+                  <ActivityIcon className="w-3 h-3" />
+                  Quantum View
+                </button>
+                <button 
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="p-2 rounded-full bg-slate-900 border border-slate-800 hover:bg-slate-800 transition-colors"
+                >
+                  {isPlaying ? <Pause className="w-4 h-4 text-white" /> : <Play className="w-4 h-4 text-white" />}
+                </button>
+              </div>
             </div>
             
             <div className="relative h-12 flex items-center px-4">

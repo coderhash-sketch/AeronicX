@@ -11,7 +11,9 @@ import {
   CheckCircle2,
   Layers,
   Zap,
-  Maximize2
+  Maximize2,
+  BrainCircuit,
+  ArrowUpRight
 } from 'lucide-react';
 
 interface Zone {
@@ -328,6 +330,28 @@ const GreenCityAdvisor: React.FC = () => {
               </div>
             )}
           </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Quantum Strategy Hub Integration */}
+      <div className="w-full">
+        <div className="glass p-10 rounded-[3rem] border-emerald-400/20 bg-gradient-to-br from-emerald-400/5 to-transparent flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 rounded-[2rem] bg-emerald-400/10 flex items-center justify-center border border-emerald-400/20 shadow-[0_0_30px_rgba(52,211,153,0.2)]">
+              <BrainCircuit className="w-8 h-8 text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-black text-white tracking-tight">Quantum Strategy Hub</h3>
+              <p className="text-slate-400 max-w-md">Bridge urban planning with quantum-optimized policy decisions.</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => window.dispatchEvent(new CustomEvent('set-workflow', { detail: 'decision-engine' }))}
+            className="px-8 py-5 bg-emerald-400 text-slate-950 rounded-2xl font-black flex items-center gap-3 hover:scale-105 transition-all shadow-[0_0_40px_rgba(52,211,153,0.3)]"
+          >
+            Launch Decision Engine
+            <ArrowUpRight className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </div>

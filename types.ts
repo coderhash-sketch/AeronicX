@@ -4,8 +4,6 @@ export enum WorkflowState {
   AI_FILTERING = 'ai-filtering',
   QUANTUM_SIMULATION = 'quantum-simulation',
   RESULTS = 'results',
-  IMPACT = 'impact',
-  ANALYTICS = 'analytics',
   CONFIG = 'config',
   LOGS = 'logs',
   SUSTAINABILITY = 'sustainability',
@@ -15,7 +13,10 @@ export enum WorkflowState {
   EXPLAINABLE_AI = 'explainable-ai',
   POLLUTION_JOURNEY = 'pollution-journey',
   CLIMATE_NETWORK = 'climate-network',
-  SCENARIO_LAB = 'scenario-lab'
+  SCENARIO_LAB = 'scenario-lab',
+  QUANTUM_OPTIMIZATION = 'quantum-optimization',
+  PREDICTION = 'prediction',
+  DECISION_ENGINE = 'decision-engine'
 }
 
 export interface MaterialCandidate {

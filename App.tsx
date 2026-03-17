@@ -32,9 +32,7 @@ import AIFilteringEngine from './components/AIFilteringEngine';
 import QuantumSimulator from './components/QuantumSimulator';
 import ResultsDashboard from './components/ResultsDashboard';
 import TechnicalModal from './components/TechnicalModal';
-import ImpactAnalysis from './components/ImpactAnalysis';
 import LabConfig from './components/LabConfig';
-import EconomicLens from './components/EconomicLens';
 import LogHistory from './components/LogHistory';
 import SDGModal from './components/SDGModal';
 import MyClimateImpact from './components/MyClimateImpact';
@@ -45,6 +43,9 @@ import ExplainableAIPanel from './components/ExplainableAIPanel';
 import PollutionJourneySimulator from './components/PollutionJourneySimulator';
 import ClimateActionNetwork from './components/ClimateActionNetwork';
 import CleanAirScenarioLab from './components/CleanAirScenarioLab';
+import QuantumOptimizationEngine from './components/QuantumOptimizationEngine';
+import PredictionDashboard from './components/PredictionDashboard';
+import QuantumDecisionEngine from './components/QuantumDecisionEngine';
 
 const DISCOVERY_DATABASE: MaterialCandidate[] = [
   {
@@ -306,8 +307,6 @@ const App: React.FC = () => {
       case WorkflowState.AI_FILTERING: return { text: "NEURAL GNN SCREENING...", color: "text-magenta-400" };
       case WorkflowState.QUANTUM_SIMULATION: return { text: "VQE COHERENCE OPTIMIZATION", color: "text-cyan-400" };
       case WorkflowState.RESULTS: return { text: `VIEWING ${selectedMaterial.id} - ${selectedMaterial.name}`, color: "text-lime-400" };
-      case WorkflowState.IMPACT: return { text: "ECOLOGICAL IMPACT PROJECTION", color: "text-emerald-400" };
-      case WorkflowState.ANALYTICS: return { text: "MARKET FEASIBILITY MAPPING", color: "text-blue-400" };
       case WorkflowState.CONFIG: return { text: "INFRASTRUCTURE OPTIMIZATION", color: "text-cyan-400" };
       case WorkflowState.LOGS: return { text: "HISTORICAL EXPERIMENT ARCHIVE", color: "text-magenta-400" };
       case WorkflowState.SUSTAINABILITY: return { text: "PERSONAL FOOTPRINT ANALYTICS", color: "text-blue-400" };
@@ -318,6 +317,9 @@ const App: React.FC = () => {
       case WorkflowState.POLLUTION_JOURNEY: return { text: "PARTICLE TRAJECTORY SIMULATOR", color: "text-emerald-400" };
       case WorkflowState.CLIMATE_NETWORK: return { text: "COMMUNITY IMPACT NETWORK", color: "text-lime-400" };
       case WorkflowState.SCENARIO_LAB: return { text: "CLEAN AIR SCENARIO LAB", color: "text-cyan-400" };
+      case WorkflowState.QUANTUM_OPTIMIZATION: return { text: "QUANTUM OPTIMIZATION ENGINE", color: "text-cyan-400" };
+      case WorkflowState.PREDICTION: return { text: "HYBRID QUANTUM-AI FORECASTING", color: "text-cyan-400" };
+      case WorkflowState.DECISION_ENGINE: return { text: "QUANTUM STRATEGY OPTIMIZATION", color: "text-emerald-400" };
       default: return { text: "SYSTEM ACTIVE", color: "text-slate-400" };
     }
   };
@@ -412,7 +414,7 @@ const App: React.FC = () => {
           )}
 
           {workflow === WorkflowState.AI_FILTERING && <AIFilteringEngine />}
-          {workflow === WorkflowState.QUANTUM_SIMULATION && <QuantumSimulator />}
+          {workflow === WorkflowState.QUANTUM_SIMULATION && <QuantumSimulator selectedMaterial={selectedMaterial} />}
           {workflow === WorkflowState.RESULTS && (
             <div className="flex-1 flex flex-col gap-8 animate-in slide-in-from-bottom-12 duration-1000">
               <div className="flex justify-between items-end border-b border-slate-200 dark:border-slate-800 pb-8">
@@ -450,8 +452,6 @@ const App: React.FC = () => {
               </div>
             </div>
           )}
-          {workflow === WorkflowState.IMPACT && <ImpactAnalysis />}
-          {workflow === WorkflowState.ANALYTICS && <EconomicLens />}
           {workflow === WorkflowState.CONFIG && <LabConfig />}
           {workflow === WorkflowState.LOGS && <LogHistory />}
           {workflow === WorkflowState.SUSTAINABILITY && <MyClimateImpact />}
@@ -461,7 +461,10 @@ const App: React.FC = () => {
           {workflow === WorkflowState.EXPLAINABLE_AI && <ExplainableAIPanel />}
           {workflow === WorkflowState.POLLUTION_JOURNEY && <PollutionJourneySimulator />}
           {workflow === WorkflowState.CLIMATE_NETWORK && <ClimateActionNetwork />}
-          {workflow === WorkflowState.SCENARIO_LAB && <CleanAirScenarioLab />}
+          {workflow === WorkflowState.SCENARIO_LAB && <CleanAirScenarioLab setWorkflow={setWorkflow} />}
+          {workflow === WorkflowState.QUANTUM_OPTIMIZATION && <QuantumOptimizationEngine />}
+          {workflow === WorkflowState.PREDICTION && <PredictionDashboard />}
+          {workflow === WorkflowState.DECISION_ENGINE && <QuantumDecisionEngine />}
         </div>
 
         <div className="h-14 glass border-t border-slate-200 dark:border-slate-800 flex items-center px-6 gap-6 overflow-hidden z-20">

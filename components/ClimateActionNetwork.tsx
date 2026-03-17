@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   TreeDeciduous, 
@@ -10,7 +10,12 @@ import {
   MapPin,
   Plus,
   Zap,
-  ChevronDown
+  ChevronDown,
+  Activity,
+  Globe,
+  Droplets,
+  CloudRain,
+  Sun
 } from 'lucide-react';
 import { CITIES, CityData } from '../constants';
 
@@ -34,14 +39,41 @@ const INITIAL_ACTIONS: Action[] = [
   { id: '6', type: 'transport', user: 'MetroUser', city: 'Tokyo', value: '+8km Train', timestamp: new Date(), x: 48, y: 88 },
   { id: '7', type: 'tree', user: 'ForestGuard', city: 'Shimla', value: '+1 Tree', timestamp: new Date(), x: 47, y: 72 },
   { id: '8', type: 'emission', user: 'SolarHome', city: 'California', value: '-20kg CO2', timestamp: new Date(), x: 42, y: 12 },
-  { id: '9', type: 'tree', user: 'LeafWatcher', city: 'Dehradun', value: '+2 Trees', timestamp: new Date(), x: 49, y: 72 },
-  { id: '10', type: 'transport', user: 'EV_Driver', city: 'Seoul', value: '+15km EV', timestamp: new Date(), x: 45, y: 85 },
-  { id: '11', type: 'tree', user: 'GreenThumb', city: 'Indore', value: '+1 Tree', timestamp: new Date(), x: 55, y: 70 },
-  { id: '12', type: 'emission', user: 'WindPower', city: 'Wellington', value: '-30kg CO2', timestamp: new Date(), x: 85, y: 95 },
-  { id: '13', type: 'tree', user: 'EcoSystem', city: 'Gangtok', value: '+5 Trees', timestamp: new Date(), x: 52, y: 77 },
-  { id: '14', type: 'transport', user: 'Cyclist_X', city: 'Copenhagen', value: '+25km Bike', timestamp: new Date(), x: 25, y: 48 },
-  { id: '15', type: 'tree', user: 'BioPulse', city: 'Zurich', value: '+1 Tree', timestamp: new Date(), x: 30, y: 50 },
 ];
+
+const LiveDataStream = ({ color }: { color: string }) => {
+  return (
+    <div className="flex items-end gap-0.5 h-8">
+      {[...Array(12)].map((_, i) => (
+        <motion.div
+          key={i}
+          animate={{ height: [4, Math.random() * 24 + 4, 4] }}
+          transition={{ duration: 1 + Math.random(), repeat: Infinity, ease: "easeInOut" }}
+          className="w-1 rounded-full"
+          style={{ backgroundColor: color }}
+        />
+      ))}
+    </div>
+  );
+};
+
+const TreeSimulation = ({ count }: { count: number }) => {
+  return (
+    <div className="flex flex-wrap gap-1 max-w-[120px]">
+      {[...Array(Math.min(count, 15))].map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: i * 0.1 }}
+        >
+          <TreeDeciduous className="w-3 h-3 text-lime-400" />
+        </motion.div>
+      ))}
+      {count > 15 && <span className="text-[8px] text-lime-400 font-bold">+{count - 15}</span>}
+    </div>
+  );
+};
 
 const ClimateActionNetwork: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<CityData | 'Global'>('Global');
@@ -59,6 +91,24 @@ const ClimateActionNetwork: React.FC = () => {
     activeNodes: 1420
   });
 
+  const citySpecificData = useMemo(() => {
+    if (selectedCity === 'Global') {
+      return {
+        activeVolunteers: 12450,
+        localImpact: "Global Cooling Trend",
+        airQuality: "Variable",
+        topAction: "Reforestation"
+      };
+    }
+    // Derive some semi-random but consistent data based on city stats
+    return {
+      activeVolunteers: Math.floor(selectedCity.policyScore * 150),
+      localImpact: selectedCity.pollution > 70 ? "Critical Intervention" : "Sustainable Growth",
+      airQuality: selectedCity.pollution < 30 ? "Excellent" : selectedCity.pollution < 60 ? "Moderate" : "Poor",
+      topAction: selectedCity.greenCoverage > 70 ? "Conservation" : "Urban Greening"
+    };
+  }, [selectedCity]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setNetworkStats(prev => ({
@@ -66,9 +116,15 @@ const ClimateActionNetwork: React.FC = () => {
         throughput: Math.max(50, Math.min(500, prev.throughput + (Math.random() - 0.5) * 20)),
         activeNodes: prev.activeNodes + (Math.random() > 0.7 ? 1 : Math.random() < 0.3 ? -1 : 0)
       }));
+
+      // Randomly add a new action to simulate live activity
+      if (Math.random() > 0.7) {
+        const types: ('tree' | 'emission' | 'transport')[] = ['tree', 'emission', 'transport'];
+        addAction(types[Math.floor(Math.random() * types.length)]);
+      }
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedCity]);
 
   const addAction = (type: 'tree' | 'emission' | 'transport') => {
     const x = Math.random() * 80 + 10;
@@ -158,7 +214,7 @@ const ClimateActionNetwork: React.FC = () => {
                         setShowCitySelector(false);
                       }}
                       className={`w-full text-left px-4 py-3 rounded-xl text-xs transition-colors ${
-                        typeof selectedCity !== 'string' && selectedCity.id === city.id 
+                        selectedCity !== 'Global' && selectedCity.id === city.id 
                           ? 'bg-cyan-500/20 text-cyan-400 font-bold' 
                           : 'text-slate-400 hover:bg-white/5 hover:text-white'
                       }`}
@@ -224,25 +280,14 @@ const ClimateActionNetwork: React.FC = () => {
           <div className="text-xs text-blue-400/60 font-mono">+8% network growth</div>
         </div>
 
-        <div className="glass p-6 rounded-3xl border border-white/5 flex flex-col gap-3 relative overflow-hidden group">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all"></div>
-          <div className="flex items-center gap-3 text-emerald-400">
-            <Zap className="w-6 h-6" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Forest Growth Index</span>
+        <div className="glass p-6 rounded-3xl border border-white/5 flex flex-col gap-2 relative overflow-hidden group bg-slate-900/40">
+          <div className="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all"></div>
+          <div className="flex items-center gap-3 text-purple-400">
+            <Users className="w-6 h-6" />
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Active Volunteers</span>
           </div>
-          <div className="flex-1 flex flex-col justify-end gap-2">
-            <div className="flex justify-between items-end">
-              <span className="text-3xl font-black text-white">84.2</span>
-              <span className="text-[10px] font-mono text-emerald-400">TARGET: 100</span>
-            </div>
-            <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: '84.2%' }}
-                className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
-              />
-            </div>
-          </div>
+          <div className="text-5xl font-black tracking-tighter text-white">{citySpecificData.activeVolunteers.toLocaleString()}</div>
+          <div className="text-xs text-purple-400/60 font-mono">Live in {selectedCity === 'Global' ? 'Global' : selectedCity.name}</div>
         </div>
       </div>
 
@@ -299,6 +344,26 @@ const ClimateActionNetwork: React.FC = () => {
               {/* Decorative Elements */}
               <div className="absolute top-1/4 left-1/4 w-32 h-32 border border-white/5 rounded-full animate-spin-slow"></div>
               <div className="absolute bottom-1/4 right-1/3 w-48 h-48 border border-white/5 rounded-full animate-reverse-orbit"></div>
+              
+              {/* Tree Simulations on Map */}
+              {selectedCity !== 'Global' && (
+                <div className="absolute inset-0 pointer-events-none opacity-30">
+                  {[...Array(10)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute"
+                      style={{ 
+                        left: `${selectedCity.lng + (Math.random() - 0.5) * 20}%`, 
+                        top: `${selectedCity.lat + (Math.random() - 0.5) * 20}%` 
+                      }}
+                    >
+                      <TreeDeciduous className="w-6 h-6 text-lime-500/40" />
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -308,105 +373,156 @@ const ClimateActionNetwork: React.FC = () => {
               <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Live Network Activity</span>
             </div>
             
-            <div className="flex gap-6 bg-slate-900/40 backdrop-blur-sm border border-white/5 p-3 rounded-2xl">
-              <div className="flex flex-col">
+            <div className="flex gap-6 bg-slate-900/60 backdrop-blur-md border border-white/10 p-4 rounded-2xl">
+              <div className="flex flex-col gap-2">
                 <span className="text-[8px] font-mono text-slate-500 uppercase">Network Load</span>
-                <span className="text-xs font-black text-cyan-400">{networkStats.load.toFixed(1)}%</span>
-                <div className="w-16 h-1 bg-white/5 mt-1 rounded-full overflow-hidden">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-black text-cyan-400">{networkStats.load.toFixed(1)}%</span>
+                  <LiveDataStream color="#22d3ee" />
+                </div>
+                <div className="w-24 h-1 bg-white/5 rounded-full overflow-hidden">
                   <motion.div 
                     animate={{ width: `${networkStats.load}%` }}
                     className="h-full bg-cyan-400"
                   />
                 </div>
               </div>
-              <div className="flex flex-col">
+              <div className="w-px bg-white/5 mx-2" />
+              <div className="flex flex-col gap-2">
                 <span className="text-[8px] font-mono text-slate-500 uppercase">Throughput</span>
-                <span className="text-xs font-black text-lime-400">{networkStats.throughput.toFixed(0)} tx/s</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-black text-lime-400">{networkStats.throughput.toFixed(0)} tx/s</span>
+                  <LiveDataStream color="#a3e635" />
+                </div>
               </div>
-              <div className="flex flex-col">
+              <div className="w-px bg-white/5 mx-2" />
+              <div className="flex flex-col gap-2">
                 <span className="text-[8px] font-mono text-slate-500 uppercase">Active Nodes</span>
-                <span className="text-xs font-black text-blue-400">{networkStats.activeNodes.toLocaleString()}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-black text-blue-400">{networkStats.activeNodes.toLocaleString()}</span>
+                  <div className="flex -space-x-2">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="w-4 h-4 rounded-full border border-slate-900 bg-slate-800 flex items-center justify-center overflow-hidden">
+                        <Users className="w-2 h-2 text-slate-400" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="absolute top-6 left-6 flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <TreeDeciduous className="w-4 h-4 text-lime-400" />
-              <span className="text-[10px] font-black text-white uppercase tracking-widest">Canopy Intelligence Overlay</span>
-            </div>
-            <p className="text-[8px] text-slate-500 font-mono max-w-[200px]">
-              Processing multi-spectral satellite imagery for real-time biomass verification. 
-              Current carbon sequestration rate: <span className="text-lime-400">4.2kg/s</span>
-            </p>
           </div>
 
           <div className="absolute top-6 right-6 flex flex-col items-end gap-2">
-            <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 p-4 rounded-2xl flex flex-col gap-3 min-w-[180px]">
+            <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 p-4 rounded-2xl flex flex-col gap-3 min-w-[220px]">
               <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                <span className="text-[10px] font-black text-white uppercase tracking-tighter">Global Impact Stream</span>
+                <span className="text-[10px] font-black text-white uppercase tracking-tighter">
+                  {selectedCity === 'Global' ? 'Global Impact Stream' : `${selectedCity.name} Local Impact`}
+                </span>
                 <div className="flex gap-1">
                   <div className="w-1 h-3 bg-cyan-500/40 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                   <div className="w-1 h-3 bg-cyan-500/60 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   <div className="w-1 h-3 bg-cyan-500/80 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-[9px]">
-                  <span className="text-slate-400">Sync Status</span>
-                  <span className="text-emerald-400 font-bold">OPTIMAL</span>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] text-slate-400 uppercase font-mono">Status</span>
+                  <span className="text-emerald-400 font-bold text-[10px]">OPTIMAL</span>
                 </div>
-                <div className="flex justify-between text-[9px]">
-                  <span className="text-slate-400">Latency</span>
-                  <span className="text-white">14ms</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] text-slate-400 uppercase font-mono">Air Quality</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-white text-[10px]">{citySpecificData.airQuality}</span>
+                    {citySpecificData.airQuality === 'Excellent' ? <Sun className="w-3 h-3 text-yellow-400" /> : <CloudRain className="w-3 h-3 text-slate-400" />}
+                  </div>
                 </div>
-                <div className="flex justify-between text-[9px]">
-                  <span className="text-slate-400">Data Integrity</span>
-                  <span className="text-white">99.99%</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] text-slate-400 uppercase font-mono">Top Action</span>
+                  <span className="text-cyan-400 font-bold text-[10px]">{citySpecificData.topAction}</span>
+                </div>
+                <div className="pt-2 border-t border-white/5">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[8px] text-slate-500 uppercase font-mono">Impact Projection</span>
+                    <span className="text-[8px] text-white">84%</span>
+                  </div>
+                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: '84%' }}
+                      className="h-full bg-gradient-to-r from-cyan-500 to-lime-500"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="glass rounded-[40px] border border-white/5 flex flex-col overflow-hidden">
-          <div className="p-6 border-b border-white/5 flex items-center justify-between">
+        <div className="glass rounded-[40px] border border-white/5 flex flex-col overflow-hidden bg-slate-900/20">
+          <div className="p-6 border-b border-white/5 flex items-center justify-between bg-slate-900/40">
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-slate-400" />
-              <span className="font-black text-xs uppercase tracking-widest text-white">Recent Actions</span>
+              <Activity className="w-4 h-4 text-lime-400" />
+              <span className="font-black text-xs uppercase tracking-widest text-white">Recent Activity</span>
             </div>
-            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+            <div className="flex items-center gap-2">
+              <span className="text-[8px] font-mono text-slate-500 uppercase">Live Feed</span>
+              <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></div>
+            </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
             <AnimatePresence initial={false}>
               {filteredActions.map(action => (
                 <motion.div
                   key={action.id}
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  className="p-3 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-1"
+                  initial={{ x: 20, opacity: 0, scale: 0.95 }}
+                  animate={{ x: 0, opacity: 1, scale: 1 }}
+                  className="p-4 bg-white/5 rounded-3xl border border-white/5 flex flex-col gap-3 hover:bg-white/10 transition-all group"
                 >
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-white">{action.user}</span>
-                    <span className="text-[8px] font-mono text-slate-500 uppercase">{action.city}</span>
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center border border-white/10">
+                        <UserIcon className="w-3 h-3 text-slate-400" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black text-white group-hover:text-cyan-400 transition-colors">{action.user}</span>
+                        <span className="text-[8px] font-mono text-slate-500 uppercase tracking-tighter">{action.city}</span>
+                      </div>
+                    </div>
+                    <span className="text-[8px] font-mono text-slate-600">{action.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {action.type === 'tree' && <TreeDeciduous className="w-3 h-3 text-lime-400" />}
-                    {action.type === 'emission' && <TrendingDown className="w-3 h-3 text-cyan-400" />}
-                    {action.type === 'transport' && <Bike className="w-3 h-3 text-blue-400" />}
-                    <span className={`text-xs font-black ${
-                      action.type === 'tree' ? 'text-lime-400' : 
-                      action.type === 'emission' ? 'text-cyan-400' : 
-                      'text-blue-400'
-                    }`}>{action.value}</span>
+                  
+                  <div className="flex items-center justify-between bg-black/20 p-2 rounded-xl">
+                    <div className="flex items-center gap-2">
+                      <div className={`p-1.5 rounded-lg ${
+                        action.type === 'tree' ? 'bg-lime-500/20 text-lime-400' : 
+                        action.type === 'emission' ? 'bg-cyan-500/20 text-cyan-400' : 
+                        'bg-blue-500/20 text-blue-400'
+                      }`}>
+                        {action.type === 'tree' && <TreeDeciduous className="w-3 h-3" />}
+                        {action.type === 'emission' && <TrendingDown className="w-3 h-3" />}
+                        {action.type === 'transport' && <Bike className="w-3 h-3" />}
+                      </div>
+                      <span className={`text-xs font-black ${
+                        action.type === 'tree' ? 'text-lime-400' : 
+                        action.type === 'emission' ? 'text-cyan-400' : 
+                        'text-blue-400'
+                      }`}>{action.value}</span>
+                    </div>
+                    {action.type === 'tree' && <TreeSimulation count={parseInt(action.value.split(' ')[0]) || 1} />}
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
             {filteredActions.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-full text-slate-600 gap-2">
-                <Zap className="w-8 h-8 opacity-20" />
-                <span className="text-[10px] font-mono uppercase tracking-widest">Waiting for activity...</span>
+              <div className="flex flex-col items-center justify-center h-full text-slate-600 gap-4 py-20">
+                <div className="relative">
+                  <Zap className="w-12 h-12 opacity-20 animate-pulse" />
+                  <div className="absolute inset-0 bg-cyan-400/10 blur-2xl rounded-full"></div>
+                </div>
+                <div className="text-center">
+                  <p className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold">Waiting for activity...</p>
+                  <p className="text-[8px] text-slate-700 mt-1">Be the first to contribute to {selectedCity === 'Global' ? 'the world' : selectedCity.name}</p>
+                </div>
               </div>
             )}
           </div>
@@ -415,5 +531,12 @@ const ClimateActionNetwork: React.FC = () => {
     </div>
   );
 };
+
+const UserIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
 
 export default ClimateActionNetwork;

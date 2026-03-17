@@ -15,8 +15,12 @@ import {
   PlayCircle,
   BrainCircuit,
   Wind,
+  Fan,
   Share2,
-  Zap
+  Zap,
+  SolarPanel,
+  Car,
+  Lightbulb
 } from 'lucide-react';
 import { WorkflowState } from '../types';
 
@@ -43,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
       id: 'filtering', 
       label: 'Neural Sieve', 
       desc: 'GNN Screening',
-      icon: Layers, 
+      icon: Lightbulb, 
       state: WorkflowState.AI_FILTERING,
       active: workflow === WorkflowState.AI_FILTERING,
       colorClass: 'text-fuchsia-400',
@@ -67,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
       id: 'materials', 
       label: 'Atomic Vault', 
       desc: 'Molecular Bank',
-      icon: Library, 
+      icon: Car, 
       state: WorkflowState.RESULTS,
       active: workflow === WorkflowState.RESULTS,
       colorClass: 'text-orange-400',
@@ -139,7 +143,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
       id: 'air-story', 
       label: 'Air Story', 
       desc: 'Narrative Mode',
-      icon: PlayCircle, 
+      icon: SolarPanel, 
       state: WorkflowState.AIR_STORY,
       active: workflow === WorkflowState.AIR_STORY,
       colorClass: 'text-purple-400',
@@ -163,7 +167,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
       id: 'pollution-journey', 
       label: 'Journey Sim', 
       desc: 'Particle Path',
-      icon: Wind, 
+      icon: Fan, 
       state: WorkflowState.POLLUTION_JOURNEY,
       active: workflow === WorkflowState.POLLUTION_JOURNEY,
       colorClass: 'text-emerald-400',
@@ -222,7 +226,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
               item.active 
                 ? `scale-110 ${item.colorClass}` 
                 : 'group-hover:scale-110 group-hover:text-slate-300'
-            }`} />
+            } ${item.icon === Fan ? 'animate-spin-slow' : ''}`} />
             
             <div className="flex flex-col">
               <span className={`font-black text-lg tracking-tighter leading-tight transition-colors ${

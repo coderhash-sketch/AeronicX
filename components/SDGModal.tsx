@@ -56,10 +56,10 @@ const SDGModal: React.FC<SDGModalProps> = ({ onClose }) => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-lime-400/5 blur-[50px] rounded-full"></div>
             <div className="flex items-center gap-3 text-lime-400 relative z-10">
               <Leaf className="w-5 h-5 sm:w-6 sm:h-6 animate-bounce-slow" />
-              <h3 className="text-base sm:text-lg font-black uppercase tracking-widest">Proposed Solution: AtomoraCQ</h3>
+              <h3 className="text-base sm:text-lg font-black uppercase tracking-widest">Proposed Solution: AeronicX</h3>
             </div>
             <p className="text-slate-200 leading-relaxed font-medium text-base sm:text-lg relative z-10">
-              AtomoraCQ solves this by combining AI and quantum simulation: AI first filters out the most promising material candidates, and then a quantum model simulates how CO₂ binds to them at the atomic level. This hybrid approach speeds up material discovery from years to hours and helps identify better, cheaper carbon capture materials to support climate action.
+              AeronicX solves this by combining AI and quantum simulation: AI first filters out the most promising material candidates, and then a quantum model simulates how CO₂ binds to them at the atomic level. This hybrid approach speeds up material discovery from years to hours and helps identify better, cheaper carbon capture materials to support climate action.
             </p>
           </section>
         </div>

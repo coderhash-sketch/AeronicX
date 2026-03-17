@@ -257,7 +257,7 @@ const EconomicLens: React.FC = () => {
           <div className="mt-auto bg-gradient-to-br from-magenta-500/10 to-blue-500/10 p-6 rounded-[2rem] border border-magenta-500/20 relative overflow-hidden group">
              <div className="relative z-10">
                 <p className="text-[11px] font-medium text-slate-400 leading-relaxed mb-4">
-                   AtomoraCQ AI has identified a 14% synthesis energy reduction by substituting organic solvents with ionic liquids in the X1 cohort.
+                   AeronicX AI has identified a 14% synthesis energy reduction by substituting organic solvents with ionic liquids in the X1 cohort.
                 </p>
                 <button 
                   onClick={handleRunAnalysis}

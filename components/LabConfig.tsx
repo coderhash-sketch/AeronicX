@@ -72,7 +72,7 @@ const LabConfig: React.FC = () => {
         </div>
         <h2 className="text-5xl font-extrabold tracking-tighter neonic-text">Lab Infrastructure Config</h2>
         <p className="text-slate-400 max-w-2xl mx-auto text-lg font-medium">
-          Fine-tune the quantum simulation hardware and AI screening parameters for the AtomoraCQ discovery pipeline.
+          Fine-tune the quantum simulation hardware and AI screening parameters for the AeronicX discovery pipeline.
         </p>
       </div>
 

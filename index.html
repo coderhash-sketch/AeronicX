@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AtomoraCQ | Quantum Material Discovery</title>
+    <title>AeronicX | Futuristic Climate Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -103,6 +103,17 @@
         background: linear-gradient(to right, #f8fafc 0%, #a3e635 50%, #22d3ee 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+      }
+      .neonic-green {
+        background: linear-gradient(45deg, #84cc16, #10b981, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 8px rgba(132, 204, 22, 0.4));
+        animation: neonic-pulse 3s ease-in-out infinite alternate;
+      }
+      @keyframes neonic-pulse {
+        0% { filter: drop-shadow(0 0 5px rgba(132, 204, 22, 0.4)); }
+        100% { filter: drop-shadow(0 0 12px rgba(163, 230, 71, 0.7)); }
       }
       .gold-text {
         color: #fbbf24;

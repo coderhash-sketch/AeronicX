@@ -15,7 +15,15 @@ import {
   Leaf,
   BrainCircuit,
   Circle,
-  Activity
+  Activity,
+  Trees,
+  Droplets,
+  Earth,
+  Flower,
+  Bike,
+  Waves,
+  Sprout,
+  Recycle
 } from 'lucide-react';
 import { WorkflowState, SimulationLog, MaterialCandidate } from './types';
 import Sidebar from './components/Sidebar';
@@ -127,7 +135,7 @@ const DISCOVERY_DATABASE: MaterialCandidate[] = [
 ];
 
 const BackgroundMolecule = ({ color, size }: { color: string, size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className="opacity-40">
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className="opacity-70">
     <circle cx="50" cy="50" r="8" fill={color} />
     <path d="M50 20 L50 80 M20 50 L80 50 M28 28 L72 72 M28 72 L72 28" stroke={color} strokeWidth="2" strokeOpacity="0.5" />
     <circle cx="50" cy="20" r="4" fill={color} fillOpacity="0.6" />
@@ -138,7 +146,7 @@ const BackgroundMolecule = ({ color, size }: { color: string, size: number }) =>
 );
 
 const QubitVisual = ({ color, size }: { color: string, size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className="opacity-40 animate-spin-slow">
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className="opacity-70 animate-spin-slow">
     <circle cx="50" cy="50" r="30" stroke={color} strokeWidth="1" strokeDasharray="5 5" />
     <circle cx="50" cy="20" r="6" fill={color} />
     <circle cx="50" cy="80" r="6" fill={color} fillOpacity="0.3" />
@@ -148,7 +156,7 @@ const QubitVisual = ({ color, size }: { color: string, size: number }) => (
 );
 
 const AtomParticle = ({ color, size }: { color: string, size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className="opacity-40">
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className="opacity-70">
     <circle cx="50" cy="50" r="12" fill={color} />
     <ellipse cx="50" cy="50" rx="35" ry="12" stroke={color} strokeWidth="1.5" strokeOpacity="0.6" transform="rotate(45 50 50)" />
     <ellipse cx="50" cy="50" rx="35" ry="12" stroke={color} strokeWidth="1.5" strokeOpacity="0.6" transform="rotate(-45 50 50)" />
@@ -160,14 +168,25 @@ const AtomParticle = ({ color, size }: { color: string, size: number }) => (
 
 const FloatingBackground = () => {
   const particles = useMemo(() => {
-    return [...Array(240)].map((_, i) => {
+    return [...Array(150)].map((_, i) => {
       const rand = Math.random();
       let type = 0;
-      if (rand < 0.25) type = 0; // Molecule
-      else if (rand < 0.50) type = 1; // Qubit
-      else if (rand < 0.75) type = 4; // AtomParticle
-      else if (rand < 0.90) type = 2; // Binary
-      else type = 3; // Lucide Atom icon
+      if (rand < 0.1) type = 0; // Molecule
+      else if (rand < 0.2) type = 1; // Qubit
+      else if (rand < 0.3) type = 4; // AtomParticle
+      else if (rand < 0.35) type = 2; // Binary
+      else if (rand < 0.4) type = 3; // Atom
+      else if (rand < 0.45) type = 5; // Trees
+      else if (rand < 0.5) type = 6; // Droplets
+      else if (rand < 0.55) type = 7; // Earth
+      else if (rand < 0.6) type = 8; // Flower
+      else if (rand < 0.65) type = 9; // Bike
+      else if (rand < 0.7) type = 10; // Sun
+      else if (rand < 0.75) type = 11; // Waves
+      else if (rand < 0.8) type = 12; // Sprout
+      else if (rand < 0.85) type = 13; // Recycle
+      else if (rand < 0.9) type = 14; // Leaf
+      else type = 15; // Globe
 
       return {
         id: i,
@@ -176,14 +195,26 @@ const FloatingBackground = () => {
         delay: `${Math.random() * -60}s`,
         speed: i % 3 === 0 ? 'animate-float-slow' : i % 3 === 1 ? 'animate-float-medium' : 'animate-float-fast',
         type,
-        size: Math.random() * 25 + 10,
-        color: i % 5 === 0 ? '#22d3ee' : i % 5 === 1 ? '#a855f7' : i % 5 === 2 ? '#84cc16' : i % 5 === 3 ? '#3b82f6' : '#f43f5e'
+        size: Math.random() * 20 + 12,
+        color: [
+          '#22c55e', // green
+          '#14532d', // dark green
+          '#3b82f6', // bluish
+          '#dc2626', // crimson red
+          '#a855f7', // purple
+          '#f472b6', // pink
+          '#fef08a', // lemon yellow
+          '#ca8a04', // dark yellow
+          '#f97316', // orangish
+          '#16a34a', // another green
+          '#064e3b'  // another dark green
+        ][i % 11]
       };
     });
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-[0.03] dark:opacity-[0.07]">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-[0.12] dark:opacity-[0.2]">
       {particles.map((p) => (
         <div 
           key={p.id} 
@@ -199,6 +230,17 @@ const FloatingBackground = () => {
           {p.type === 4 && <AtomParticle color={p.color} size={p.size} />}
           {p.type === 2 && <div className="font-mono font-black select-none" style={{ color: p.color, fontSize: p.size / 2.2 }}>|{Math.random() > 0.5 ? '01' : '10'}⟩</div>}
           {p.type === 3 && <Atom size={p.size} style={{ color: p.color }} className="animate-spin-slow" />}
+          {p.type === 5 && <Trees size={p.size} style={{ color: p.color }} />}
+          {p.type === 6 && <Droplets size={p.size} style={{ color: p.color }} />}
+          {p.type === 7 && <Earth size={p.size} style={{ color: p.color }} />}
+          {p.type === 8 && <Flower size={p.size} style={{ color: p.color }} />}
+          {p.type === 9 && <Bike size={p.size} style={{ color: p.color }} />}
+          {p.type === 10 && <Sun size={p.size} style={{ color: p.color }} />}
+          {p.type === 11 && <Waves size={p.size} style={{ color: p.color }} />}
+          {p.type === 12 && <Sprout size={p.size} style={{ color: p.color }} />}
+          {p.type === 13 && <Recycle size={p.size} style={{ color: p.color }} />}
+          {p.type === 14 && <Leaf size={p.size} style={{ color: p.color }} />}
+          {p.type === 15 && <Globe size={p.size} style={{ color: p.color }} />}
         </div>
       ))}
     </div>
@@ -288,7 +330,7 @@ const App: React.FC = () => {
       <Sidebar workflow={workflow} setWorkflow={setWorkflow} />
       
       <main className="flex-1 flex flex-col relative overflow-hidden z-10">
-        <header className="h-32 flex items-center justify-between px-10 border-b border-slate-200 dark:border-slate-800 glass z-20">
+        <header className="h-40 flex items-center justify-between px-10 border-b border-slate-200 dark:border-slate-800 glass z-20 py-4">
           <div className="flex items-center gap-5">
             <div className="relative group cursor-pointer">
               <div className="absolute inset-0 bg-cyan-400/20 blur-xl rounded-full animate-pulse group-hover:bg-cyan-400/40 transition-colors"></div>
@@ -303,14 +345,17 @@ const App: React.FC = () => {
               </div>
             </div>
             <div className="group">
-              <h1 className="font-black text-5xl tracking-tighter leading-none flex items-center">
-                <span className="neonic-logo transition-transform group-hover:scale-105 duration-500">Atomora</span>
-                <span className="neonic-text relative ml-1">
-                  CQ
+              <h1 className="font-black tracking-tighter leading-none flex items-center" style={{ fontSize: 'calc(3rem + 0.4cm)' }}>
+                <span className="neonic-logo transition-transform group-hover:scale-105 duration-500">Aeronic</span>
+                <span className="neonic-text relative">
+                  X
                   <div className="absolute -inset-2 bg-gradient-to-r from-cyan-400 to-purple-500 blur-md opacity-0 group-hover:opacity-30 animate-spin-slow rounded-full -z-10"></div>
                 </span>
               </h1>
-              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] mt-2 ml-1 opacity-70 group-hover:opacity-100 transition-opacity">Futuristic Climate Intelligence</p>
+              <div className="mt-2 ml-1 space-y-2">
+                <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.4em] opacity-70 group-hover:opacity-100 transition-opacity">FUTURISTIC CLIMATE INTELLIGENCE</p>
+                <p className="font-black tracking-wider transition-opacity italic neonic-green" style={{ fontSize: 'calc(9px + 0.25cm)', lineHeight: '1.2' }}>Evolution of AtomoraCQ</p>
+              </div>
             </div>
           </div>
 

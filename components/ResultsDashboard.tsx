@@ -77,7 +77,7 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ selectedMaterial, m
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `AtomoraCQ_${selectedMaterial.name}.json`;
+    link.download = `AeronicX_${selectedMaterial.name}.json`;
     link.click();
   };
 

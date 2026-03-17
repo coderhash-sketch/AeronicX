@@ -69,7 +69,7 @@ const TechnicalModal: React.FC<TechnicalModalProps> = ({ onClose }) => {
              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50"></div>
              <h4 className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.4em] mb-4">Engineering Vision & Challenges</h4>
              <p className="text-xl font-bold text-white leading-relaxed italic opacity-90">
-               "AtomoraCQ masters the complex synchronization of high-throughput AI screening with sub-atomic quantum precision across a 1.2-million-material library. Our primary architectural challenge was translating abstract quantum behaviors into a high-performance, intuitive interface that maintains scientific rigor without sacrificing aesthetic clarity. By successfully bridging these domains, we’ve transformed theoretical physics into a tangible engine for scalable climate discovery."
+               "AeronicX masters the complex synchronization of high-throughput AI screening with sub-atomic quantum precision across a 1.2-million-material library. Our primary architectural challenge was translating abstract quantum behaviors into a high-performance, intuitive interface that maintains scientific rigor without sacrificing aesthetic clarity. By successfully bridging these domains, we’ve transformed theoretical physics into a tangible engine for scalable climate discovery."
              </p>
           </div>
 

@@ -22,7 +22,9 @@ import {
   Target,
   SolarPanel,
   Car,
-  Lightbulb
+  Lightbulb,
+  LayoutDashboard,
+  Bell
 } from 'lucide-react';
 import { WorkflowState } from '../types';
 
@@ -38,8 +40,32 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
       label: 'Synthesis Hub', 
       desc: 'Discovery Core',
       icon: FlaskConical, 
+      state: WorkflowState.CARBON_RESEARCH,
+      active: workflow === WorkflowState.CARBON_RESEARCH,
+      colorClass: 'text-cyan-400',
+      activeBg: 'bg-cyan-400/10',
+      activeBorder: 'border-cyan-400/20',
+      glowShadow: 'shadow-[inset_0_0_20px_rgba(34,211,238,0.1)]'
+    },
+    { 
+      id: 'command-center', 
+      label: 'Command Center', 
+      desc: 'Climate OS Home',
+      icon: LayoutDashboard, 
       state: WorkflowState.IDLE,
       active: workflow === WorkflowState.IDLE,
+      colorClass: 'text-emerald-400',
+      activeBg: 'bg-emerald-400/10',
+      activeBorder: 'border-emerald-400/20',
+      glowShadow: 'shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]'
+    },
+    { 
+      id: 'prediction', 
+      label: 'Hybrid Predict', 
+      desc: 'Quantum-AI Forecast',
+      icon: TrendingUp, 
+      state: WorkflowState.PREDICTION,
+      active: workflow === WorkflowState.PREDICTION,
       colorClass: 'text-cyan-400',
       activeBg: 'bg-cyan-400/10',
       activeBorder: 'border-cyan-400/20',
@@ -202,18 +228,6 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
       glowShadow: 'shadow-[inset_0_0_20px_rgba(163,230,71,0.1)]'
     },
     { 
-      id: 'prediction', 
-      label: 'Hybrid Predict', 
-      desc: 'Quantum-AI Forecast',
-      icon: TrendingUp, 
-      state: WorkflowState.PREDICTION,
-      active: workflow === WorkflowState.PREDICTION,
-      colorClass: 'text-cyan-400',
-      activeBg: 'bg-cyan-400/10',
-      activeBorder: 'border-cyan-400/20',
-      glowShadow: 'shadow-[inset_0_0_20px_rgba(34,211,238,0.1)]'
-    },
-    { 
       id: 'decision-engine', 
       label: 'Decision Hub', 
       desc: 'Quantum Strategy',
@@ -224,6 +238,18 @@ const Sidebar: React.FC<SidebarProps> = ({ workflow, setWorkflow }) => {
       activeBg: 'bg-emerald-400/10',
       activeBorder: 'border-emerald-400/20',
       glowShadow: 'shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]'
+    },
+    { 
+      id: 'citizen-advisory', 
+      label: 'Advisory Center', 
+      desc: 'Citizen Health Hub',
+      icon: Bell, 
+      state: WorkflowState.CITIZEN_ADVISORY,
+      active: workflow === WorkflowState.CITIZEN_ADVISORY,
+      colorClass: 'text-magenta-400',
+      activeBg: 'bg-magenta-400/10',
+      activeBorder: 'border-magenta-400/20',
+      glowShadow: 'shadow-[inset_0_0_20px_rgba(217,70,239,0.1)]'
     },
   ];
 

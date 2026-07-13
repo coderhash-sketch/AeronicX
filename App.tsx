@@ -47,6 +47,8 @@ import QuantumOptimizationEngine from './components/QuantumOptimizationEngine';
 import PredictionDashboard from './components/PredictionDashboard';
 import QuantumDecisionEngine from './components/QuantumDecisionEngine';
 import DigitalTwinEngine from './components/DigitalTwinEngine';
+import { CitizenAdvisoryCenter } from './components/CitizenAdvisoryCenter';
+import { EnvironmentalCommandCenter } from './components/EnvironmentalCommandCenter';
 
 const DISCOVERY_DATABASE: MaterialCandidate[] = [
   {
@@ -291,7 +293,7 @@ const App: React.FC = () => {
   };
 
   const resetPipeline = () => {
-    setWorkflow(WorkflowState.IDLE);
+    setWorkflow(WorkflowState.CARBON_RESEARCH);
     setLogs([]);
     setSelectedMaterial(DISCOVERY_DATABASE[0]);
   };
@@ -304,7 +306,8 @@ const App: React.FC = () => {
 
   const getStatusLabel = (state: WorkflowState) => {
     switch (state) {
-      case WorkflowState.IDLE: return { text: "QUANTUM SYNTHESIS STANDBY", color: "text-slate-400" };
+      case WorkflowState.IDLE: return { text: "COMMAND CENTER LIVE", color: "text-emerald-400 font-bold" };
+      case WorkflowState.CARBON_RESEARCH: return { text: "QUANTUM SYNTHESIS STANDBY", color: "text-cyan-400" };
       case WorkflowState.AI_FILTERING: return { text: "NEURAL GNN SCREENING...", color: "text-magenta-400" };
       case WorkflowState.QUANTUM_SIMULATION: return { text: "VQE COHERENCE OPTIMIZATION", color: "text-cyan-400" };
       case WorkflowState.RESULTS: return { text: `VIEWING ${selectedMaterial.id} - ${selectedMaterial.name}`, color: "text-lime-400" };
@@ -322,6 +325,7 @@ const App: React.FC = () => {
       case WorkflowState.PREDICTION: return { text: "HYBRID QUANTUM-AI FORECASTING", color: "text-cyan-400" };
       case WorkflowState.DECISION_ENGINE: return { text: "QUANTUM STRATEGY OPTIMIZATION", color: "text-emerald-400" };
       case WorkflowState.DIGITAL_TWIN: return { text: "CLIMATE DIGITAL TWIN ENGINE", color: "text-cyan-400" };
+      case WorkflowState.CITIZEN_ADVISORY: return { text: "CITIZEN ADVISORY INTELLIGENCE", color: "text-magenta-400" };
       default: return { text: "SYSTEM ACTIVE", color: "text-slate-400" };
     }
   };
@@ -388,6 +392,10 @@ const App: React.FC = () => {
 
         <div className="flex-1 flex flex-col p-10 overflow-y-auto relative z-10">
           {workflow === WorkflowState.IDLE && (
+            <EnvironmentalCommandCenter setWorkflow={setWorkflow} addLog={addLog} />
+          )}
+
+          {workflow === WorkflowState.CARBON_RESEARCH && (
             <div className="flex-1 flex flex-col items-center justify-center space-y-10 animate-in fade-in zoom-in duration-700">
               <div className="relative">
                 <div className="absolute inset-0 bg-cyan-500 blur-[100px] opacity-20 rounded-full animate-pulse"></div>
@@ -468,6 +476,7 @@ const App: React.FC = () => {
           {workflow === WorkflowState.PREDICTION && <PredictionDashboard />}
           {workflow === WorkflowState.DECISION_ENGINE && <QuantumDecisionEngine />}
           {workflow === WorkflowState.DIGITAL_TWIN && <DigitalTwinEngine />}
+          {workflow === WorkflowState.CITIZEN_ADVISORY && <CitizenAdvisoryCenter />}
         </div>
 
         <div className="h-14 glass border-t border-slate-200 dark:border-slate-800 flex items-center px-6 gap-6 overflow-hidden z-20">

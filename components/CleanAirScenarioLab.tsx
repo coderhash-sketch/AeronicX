@@ -23,7 +23,7 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
-import { CITIES, CityData } from '../constants';
+import { CITIES, CityData, getRealisticAqi } from '../constants';
 import { WorkflowState } from '../types';
 
 interface CleanAirScenarioLabProps {
@@ -47,11 +47,19 @@ const CleanAirScenarioLab: React.FC<CleanAirScenarioLabProps> = ({ setWorkflow }
     setIndustrial(Math.round(selectedCity.pollution * 0.7));
   }, [selectedCity]);
 
-  // Derived metrics
+  // Derived metrics based on getRealisticAqi for absolute consistency
   const aqi = useMemo(() => {
-    const base = 50 + selectedCity.pollution;
-    const reduction = (100 - traffic) * 0.5 + greenInfra * 0.8 + electric * 0.4 + (100 - industrial) * 0.6;
-    return Math.max(15, Math.round(base + (selectedCity.pollution > 50 ? 100 : 20) - reduction));
+    const base = getRealisticAqi(selectedCity.name);
+    // Reduction from interventions
+    const trafficImprovement = (100 - traffic) * 0.35;
+    const greenImprovement = greenInfra * 0.45;
+    const electricImprovement = electric * 0.25;
+    const industrialImprovement = (100 - industrial) * 0.45;
+    
+    const totalReduction = trafficImprovement + greenImprovement + electricImprovement + industrialImprovement;
+    // Scaled based on original base AQI to prevent negative or overly low results
+    const pctImprovement = Math.min(0.75, totalReduction / 120);
+    return Math.max(12, Math.round(base * (1 - pctImprovement)));
   }, [traffic, greenInfra, electric, industrial, selectedCity]);
 
   const co2 = useMemo(() => {

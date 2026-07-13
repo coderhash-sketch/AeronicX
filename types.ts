@@ -1,6 +1,7 @@
 
 export enum WorkflowState {
   IDLE = 'idle',
+  CARBON_RESEARCH = 'carbon-research',
   AI_FILTERING = 'ai-filtering',
   QUANTUM_SIMULATION = 'quantum-simulation',
   RESULTS = 'results',
@@ -17,7 +18,8 @@ export enum WorkflowState {
   SCENARIO_LAB = 'scenario-lab',
   QUANTUM_OPTIMIZATION = 'quantum-optimization',
   PREDICTION = 'prediction',
-  DECISION_ENGINE = 'decision-engine'
+  DECISION_ENGINE = 'decision-engine',
+  CITIZEN_ADVISORY = 'citizen-advisory'
 }
 
 export interface MaterialCandidate {

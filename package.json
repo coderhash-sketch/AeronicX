@@ -10,6 +10,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@google/genai": "^2.11.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "axios": "^1.13.6",

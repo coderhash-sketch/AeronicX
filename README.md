@@ -1,6 +1,6 @@
-# 🌌 AtomOracq: Hyperlocal Urban Air Quality Digital Twin & Quantum-Classical Decision Optimizer
+# 🌌 AeronicX: Hyperlocal Urban Air Quality Digital Twin & Quantum-Classical Decision Optimizer
 
-**AtomOracq** is a cutting-edge, full-stack, enterprise-grade environmental intelligence system. It serves as a **hyperlocal digital twin** of metropolitan atmospheres, merging live real-world telemetry with state-of-the-art **Stochastic Quantum Simulation**, **Explainable AI (XAI)**, and **Large Language Model (LLM) Translation Pipelines** to coordinate municipal budgets, predict hazardous particulate surges, and optimize policy interventions.
+**AeronicX** is a cutting-edge, full-stack, enterprise-grade environmental intelligence system. It serves as a **hyperlocal digital twin** of metropolitan atmospheres, merging live real-world telemetry with state-of-the-art **Stochastic Quantum Simulation**, **Explainable AI (XAI)** to coordinate municipal budgets, predict hazardous particulate surges, and optimize policy interventions.
 
 ---
 
@@ -10,7 +10,7 @@ Metropolitan centers worldwide struggle with localized, highly variable surges i
 1. **Retrospective Static Reporting**: They display historical data without predictive capability.
 2. **"Black Box" Actionability**: They show high pollution numbers but fail to advise city administrators *how* to allocate budgets for maximum abatement or *why* specific sectors are spiking.
 
-**AtomOracq** solves this by closing the loop between real-world telemetry, predictive models, and optimization:
+**AeronicX** solves this by closing the loop between real-world telemetry, predictive models, and optimization:
 
 ```
 [ Real-world Telemetry ] ─> ( Express API Proxy ) ─> [ Digital Twin Sandbox ]
@@ -24,7 +24,7 @@ Metropolitan centers worldwide struggle with localized, highly variable surges i
 
 ## 🛠️ 2. The Complete Tech Stack
 
-The architecture of AtomOracq is engineered for high performance, absolute type safety, and seamless cloud orchestration:
+The architecture of AeronicX is engineered for high performance, absolute type safety, and seamless cloud orchestration:
 
 ### 💻 Client-Side Architecture (Single Page App)
 *   **React 18 & TypeScript**: Strongly-typed, highly componentized UI built with strict static compiler validation (`tsc --noEmit`).
@@ -42,7 +42,7 @@ The architecture of AtomOracq is engineered for high performance, absolute type 
 
 ## 🧮 3. Algorithmic Blueprint & Scientific Models
 
-AtomOracq stands out by utilizing real-world quantum optimization, physics-informed micro-climate models, and explainable AI algorithms:
+AeronicX stands out by utilizing real-world quantum optimization, physics-informed micro-climate models, and explainable AI algorithms:
 
 ### ⚛️ A. Simulated Quantum Approximate Optimization Algorithm (QAOA)
 *   **Purpose**: Resolves the optimal distribution of municipal environmental capital across competitive, non-linear abatement initiatives (e.g., green-belt construction, scrubbing industrial vents, public transport electrification).

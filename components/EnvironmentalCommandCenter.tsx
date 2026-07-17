@@ -267,6 +267,7 @@ export const EnvironmentalCommandCenter: React.FC<ECCProps> = ({ setWorkflow, ad
   useEffect(() => {
     let active = true;
     setIsAqiLoading(true);
+    setLiveAqiData(null); // Clear previous city's data to prevent stale display
     fetch(`/api/live-aqi?city=${encodeURIComponent(selectedCityName)}`)
       .then(res => {
         if (!res.ok) throw new Error("API error");
@@ -340,7 +341,7 @@ export const EnvironmentalCommandCenter: React.FC<ECCProps> = ({ setWorkflow, ad
     }
 
     // Overwrite with live API values if available
-    if (liveAqiData && liveAqiData.city.toLowerCase() === selectedCityName.toLowerCase()) {
+    if (liveAqiData) {
       const aqi = liveAqiData.aqi;
       baseData.aqi = aqi;
       baseData.pm25 = liveAqiData.pm25;

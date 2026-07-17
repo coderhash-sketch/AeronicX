@@ -204,6 +204,7 @@ const PredictionDashboard: React.FC = () => {
   useEffect(() => {
     let active = true;
     setIsLiveAqiLoading(true);
+    setLiveAqi(null); // Clear previous city's AQI
     fetch(`/api/live-aqi?city=${encodeURIComponent(selectedCity)}`)
       .then(res => res.json())
       .then(data => {
@@ -255,11 +256,27 @@ const PredictionDashboard: React.FC = () => {
   const activeCityData = useMemo((): CityGrid => {
     let baseGrid: CityGrid;
 
-    if (METRO_GRIDS[selectedCity]) {
+    // Resolve common spelling variants to handcrafted METRO_GRIDS key
+    const normalizedCity = selectedCity.trim().toLowerCase();
+    let targetKey = "";
+    if (normalizedCity === 'delhi' || normalizedCity === 'new delhi') {
+      targetKey = 'New Delhi';
+    } else if (normalizedCity === 'bangalore' || normalizedCity === 'banglore' || normalizedCity === 'bengaluru') {
+      targetKey = 'Bengaluru';
+    } else if (normalizedCity === 'chennai' || normalizedCity === 'madras') {
+      targetKey = 'Chennai';
+    } else if (normalizedCity === 'mumbai') {
+      targetKey = 'Mumbai';
+    } else if (normalizedCity === 'kolkata') {
+      targetKey = 'Kolkata';
+    }
+
+    if (targetKey && METRO_GRIDS[targetKey]) {
       // Create a copy so we don't mutate the global constant
-      const original = METRO_GRIDS[selectedCity];
+      const original = METRO_GRIDS[targetKey];
       baseGrid = {
         ...original,
+        cityName: selectedCity, // Keep the selected spelling in display
         sectors: original.sectors.map(s => ({ ...s }))
       };
     } else {
@@ -269,37 +286,65 @@ const PredictionDashboard: React.FC = () => {
       // Generate 16 simulated sectors dynamically for this city so that it feels fully alive
       const sectorNames = getSectorNamesForCity(globalCity.name);
       
+      // Determine if city is coastal to prevent generating maritime emissions in landlocked cities
+      const coastalCities = [
+        'singapore', 'new york', 'mumbai', 'chennai', 'madras', 'goa', 'pondicherry', 'udupi', 
+        'surathkal', 'sydney', 'melbourne', 'wellington', 'auckland', 'adelaide', 'vishakhapatnam', 'brazil', 'italy'
+      ];
+      const isCoastalCity = coastalCities.includes(globalCity.name.toLowerCase());
+
       const sectors: SectorData[] = sectorNames.map((name, i) => {
-        const type: SectorData['type'] = i % 5 === 0 
-          ? 'industrial' 
-          : i % 5 === 1 
-            ? 'commercial' 
-            : i % 5 === 2 
-              ? 'residential' 
-              : i % 5 === 3 
-                ? 'coastal' 
-                : 'green';
+        // If coastal city, use 5 types. If landlocked, use 4 types (avoid coastal)
+        let type: SectorData['type'];
+        if (isCoastalCity) {
+          const types: SectorData['type'][] = ['industrial', 'commercial', 'residential', 'coastal', 'green'];
+          type = types[i % 5];
+        } else {
+          const types: SectorData['type'][] = ['industrial', 'commercial', 'residential', 'green'];
+          type = types[i % 4];
+        }
                 
-        const baseFactor = type === 'industrial' ? 1.3 : type === 'commercial' ? 1.1 : type === 'green' ? 0.75 : 1.0;
-        const sectorBaseAqi = Math.max(15, Math.round(baseAqi * baseFactor));
+        let baseFactor = 1.0;
+        let densityOffset = 50;
+        let vulnerabilityScore = 50;
+        let sources: string[] = [];
+
+        if (type === 'industrial') {
+          baseFactor = 1.25 + (i % 3) * 0.05; // 1.25, 1.30, 1.35
+          densityOffset = 80 + (i % 4) * 4;   // 80, 84, 88, 92
+          vulnerabilityScore = 50 + (i % 5) * 5; // 50, 55, 60, 65, 70
+          sources = ['Heavy Industrial Furnaces', 'Smelter Stack Discharge', 'Fugitive Particulate Matter'];
+        } else if (type === 'commercial') {
+          baseFactor = 1.05 + (i % 3) * 0.05; // 1.05, 1.10, 1.15
+          densityOffset = 65 + (i % 4) * 4;   // 65, 69, 73, 77
+          vulnerabilityScore = 60 + (i % 5) * 5; // 60, 65, 70, 75, 80
+          sources = ['High Speed Transit Gridlock', 'Street Vendor Coal Grills', 'Commercial Building Exhausts'];
+        } else if (type === 'residential') {
+          baseFactor = 0.9 + (i % 3) * 0.05;  // 0.9, 0.95, 1.0
+          densityOffset = 45 + (i % 4) * 4;   // 45, 49, 53, 57
+          vulnerabilityScore = 75 + (i % 5) * 4; // 75, 79, 83, 87, 91 (high vulnerability due to residential population/schools)
+          sources = ['Domestic Fuel Cookers', 'Localized Bio-waste Burning', 'Backup Diesel Generators'];
+        } else if (type === 'coastal') {
+          baseFactor = 0.85 + (i % 3) * 0.05; // 0.85, 0.90, 0.95
+          densityOffset = 55 + (i % 4) * 4;   // 55, 59, 63, 67
+          vulnerabilityScore = 55 + (i % 5) * 5; // 55, 60, 65, 70, 75
+          sources = ['Harbor Cargo Loading Exhaust', 'Seaside Aggregate Silt', 'Marine Vessel Auxiliary Engines'];
+        } else { // green
+          baseFactor = 0.7 + (i % 3) * 0.05;  // 0.7, 0.75, 0.8
+          densityOffset = 20 + (i % 4) * 3;   // 20, 23, 26, 29
+          vulnerabilityScore = 65 + (i % 5) * 5; // 65, 70, 75, 80, 85
+          sources = ['Minor Background Transport Drift', 'Aerosol Secondary Drift', 'Urban Forest Clean Boundary'];
+        }
         
-        const sources = type === 'industrial' 
-          ? ['Heavy Boilers', 'Smelter Stack Discharge', 'Fugitive Particulates']
-          : type === 'commercial'
-            ? ['High Speed Transit Gridlock', 'Street Hawker Grills', 'Building Air Exhausts']
-            : type === 'residential'
-              ? ['Domestic Bio-fuel Cookers', 'Localized Leaf Fire Stagnation', 'Standby Diesel Generators']
-              : type === 'coastal'
-                ? ['Harbor Cargo Loading Exhaust', 'Seaside Aggregate Silt', 'Marine Engine Vapor']
-                : ['Minor Traffic Drift', 'Background Secondary Pollutants', 'Suburban Inflow'];
+        const sectorBaseAqi = Math.max(12, Math.round(baseAqi * baseFactor));
                 
         return {
           name,
           baseAqi: sectorBaseAqi,
           type,
           sources,
-          densityOffset: Math.round(35 + (i * 4) % 60),
-          vulnerabilityScore: Math.round(40 + (i * 3.5) % 55)
+          densityOffset,
+          vulnerabilityScore
         };
       });
       

@@ -102,6 +102,7 @@ const DigitalTwinEngine: React.FC = () => {
   useEffect(() => {
     let active = true;
     setIsLiveAqiLoading(true);
+    setLiveAqi(null); // Reset live AQI state on city change
     fetch(`/api/live-aqi?city=${encodeURIComponent(selectedCityName)}`)
       .then(res => res.json())
       .then(data => {

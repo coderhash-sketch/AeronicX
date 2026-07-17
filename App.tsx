@@ -275,6 +275,22 @@ const App: React.FC = () => {
     }
   }, [isDarkMode]);
 
+  useEffect(() => {
+    const handleSetWorkflow = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const targetState = customEvent.detail;
+      const validStates = Object.values(WorkflowState) as string[];
+      if (validStates.includes(targetState)) {
+        setWorkflow(targetState as WorkflowState);
+        addLog(`Transitioned view to ${targetState.toUpperCase()}`, "info");
+      }
+    };
+    window.addEventListener('set-workflow', handleSetWorkflow);
+    return () => {
+      window.removeEventListener('set-workflow', handleSetWorkflow);
+    };
+  }, []);
+
   const initiateDiscovery = () => {
     setWorkflow(WorkflowState.AI_FILTERING);
     addLog("Initiating discovery pipeline...", "info");
